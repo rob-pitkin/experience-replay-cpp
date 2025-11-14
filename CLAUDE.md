@@ -5,6 +5,7 @@
   - Add `TODO` comments to the code to instruct me what to do without giving me the solution.
   - Write instruction steps for me to follow to complete the task.
   - Don't be too revealing with written hints or solutions. I want to learn by doing or asking questions.
+- For discussion questions, I want to discuss them with you one at a time and don't give me the answer outright. I want to try answering the question and check my answer with you.
 
 # Docs
 - Always refer back to `docs/replay_buffer_spec.md` for the project specification.

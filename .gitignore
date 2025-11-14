@@ -49,9 +49,10 @@ build/
 benchmark_results/
 *.prof
 
-# Local Claude notes
+# Claude-generated instruction files and notes
+.claude/
 docs/notes.md
 docs/timeline.md
 docs/CLAUDE.md
 docs/cmake_primer.md
-docs/SETUP_INSTRUCTIONS.md
+docs/googletest_patterns.md

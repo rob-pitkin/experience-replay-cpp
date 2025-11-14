@@ -16,9 +16,11 @@ A high-performance, multi-process experience replay buffer service for reinforce
 
 ## Getting Started
 
-1. **Read the setup instructions:** [SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md)
+1. **Read the setup instructions:** [.claude/SETUP_INSTRUCTIONS.md](.claude/SETUP_INSTRUCTIONS.md)
 2. **Follow the TODOs** to create your CMake configuration
 3. **Ask Claude** any questions about C++, CMake, or design decisions
+
+Note: Task-specific instruction files are in the `.claude/` directory (gitignored)
 
 ## Documentation
 
