@@ -1,0 +1,57 @@
+# Build directories
+build/
+cmake-build-*/
+out/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Compiled files
+*.o
+*.a
+*.so
+*.dylib
+*.lib
+*.dll
+*.exe
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+!cmake/*.cmake
+
+# Test outputs
+Testing/
+CTestTestfile.cmake
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python (for later when we add pybind11)
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Benchmark results
+benchmark_results/
+*.prof
+
+# Local Claude notes
+docs/notes.md
+docs/timeline.md
+docs/CLAUDE.md
+docs/cmake_primer.md
+docs/SETUP_INSTRUCTIONS.md
