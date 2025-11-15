@@ -1,4 +1,4 @@
-add_executable(replay_buffer_tests hello_test.cpp)
+add_executable(replay_buffer_tests hello_test.cpp transition_test.cpp)
 
 target_link_libraries(replay_buffer_tests PRIVATE gtest_main)
 
