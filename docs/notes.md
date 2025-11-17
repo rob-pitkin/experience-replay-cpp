@@ -83,7 +83,39 @@
 - EXPECT vs ASSERT (soft vs hard failures)
 - Automatic test discovery saves manual registration
 
-**Next Up:** Circular buffer implementation (ROB-8)
+**Next Up:** Thread safety with mutexes (ROB-9)
+
+### November 17, 2024 - Phase 1.4 Complete
+
+**Completed:**
+- ✅ Circular buffer template class
+- ✅ Wraparound logic with modulo operator
+- ✅ Head/tail pointer management
+- ✅ Comprehensive testing (15 tests passing)
+
+**Key Learnings:**
+1. **RAII in action** - std::vector handles all cleanup automatically
+2. **Rule of Zero** - No need for destructor, copy/move constructors when using containers
+3. **reserve() vs resize()** - reserve() allocates space, resize() creates elements
+4. **Template classes** - More complex than template structs, but same principles
+5. **Header-only requirement for templates** - Compiler needs full definition to instantiate
+6. **Const correctness matters** - Both const and non-const overloads for accessors
+
+**Bug Fixed:**
+- Originally used `reserve()` instead of `resize()` causing undefined behavior
+- Fixed by using `resize()` to actually create elements in vector
+
+**Design Decisions:**
+- Chose head/tail pointer approach over single write index
+- Used `std::vector` for storage (RAII benefits)
+- Made all query methods const-correct
+- Comprehensive bounds checking with exceptions
+
+**Discussion Highlights:**
+- Why templates MUST be in headers (compilation model)
+- reserve() vs resize() for std::vector
+- Explicit template instantiation (rarely used)
+- Chrome's philosophy: "Pay at compile time, not at runtime"
 
 ## Open Questions
 - Should we use std::pmr for memory pools later?

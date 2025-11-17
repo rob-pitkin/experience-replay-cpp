@@ -6,11 +6,13 @@
   - Write instruction steps for me to follow to complete the task.
   - Don't be too revealing with written hints or solutions. I want to learn by doing or asking questions.
 - For discussion questions, I want to discuss them with you one at a time and don't give me the answer outright. I want to try answering the question and check my answer with you.
+- Write all instruction files for each taskin the `.claude/` directory.
 
 # Docs
 - Always refer back to `docs/replay_buffer_spec.md` for the project specification.
 - Update `docs/timeline.md` to reflect the current progress of the project and what the current tasks are.
 - Take any notes that you would like to remember for future reference or just to use as a memory doc in `docs/notes.md`.
+    - If `docs/notes.md` is getting too long, rewrite it from scratch with a condensed summary of the notes.
 
 # Project Management
 - Use the Linear MCP server to create fine-grained tasks to complete based on `docs/replay_buffer_spec.md` and update `docs/timeline.md` accordingly.
