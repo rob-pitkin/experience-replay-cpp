@@ -6,6 +6,7 @@
 /// Provides O(1) add and access operations.
 
 #include <cstddef>
+#include <shared_mutex>
 #include <stdexcept>
 #include <vector>
 
@@ -28,17 +29,30 @@ class CircularBuffer {
     tail_ = 0;
   }
 
-  size_t size() const { return size_; }
+  size_t size() const {
+    std::shared_lock<std::shared_mutex> lock(mutex_);
+    return size_;
+  }
 
-  size_t capacity() const { return capacity_; }
+  size_t capacity() const {
+    std::shared_lock<std::shared_mutex> lock(mutex_);
+    return capacity_;
+  }
 
-  bool is_full() const { return size_ == capacity_; }
+  bool is_full() const {
+    std::shared_lock<std::shared_mutex> lock(mutex_);
+    return size_ == capacity_;
+  }
 
-  bool is_empty() const { return size_ == 0; }
+  bool is_empty() const {
+    std::shared_lock<std::shared_mutex> lock(mutex_);
+    return size_ == 0;
+  }
 
   void add(const T& item) {
+    std::lock_guard<std::shared_mutex> lock(mutex_);
     // Case 1: Buffer is not full, insert at tail and increment tail
-    if (!is_full()) {
+    if (size_ != capacity_) {
       buffer_[tail_] = item;
       tail_ = (tail_ + 1) % capacity_;
       size_++;
@@ -53,6 +67,7 @@ class CircularBuffer {
   }
 
   void clear() {
+    std::lock_guard<std::shared_mutex> lock(mutex_);
     buffer_.clear();
     size_ = 0;
     head_ = 0;
@@ -60,6 +75,7 @@ class CircularBuffer {
   }
 
   T& operator[](size_t index) {
+    std::lock_guard<std::shared_mutex> lock(mutex_);
     if (index >= size_) {
       throw std::out_of_range("Index out of range");
     }
@@ -67,6 +83,7 @@ class CircularBuffer {
   }
 
   const T& operator[](size_t index) const {
+    std::shared_lock<std::shared_mutex> lock(mutex_);
     if (index >= size_) {
       throw std::out_of_range("Index out of range");
     }
@@ -74,6 +91,7 @@ class CircularBuffer {
   }
 
   T& at(size_t index) {
+    std::lock_guard<std::shared_mutex> lock(mutex_);
     if (index >= size_) {
       throw std::out_of_range("Index out of range");
     }
@@ -81,6 +99,7 @@ class CircularBuffer {
   }
 
   const T& at(size_t index) const {
+    std::shared_lock<std::shared_mutex> lock(mutex_);
     if (index >= size_) {
       throw std::out_of_range("Index out of range");
     }
@@ -93,5 +112,6 @@ class CircularBuffer {
   size_t size_;
   size_t head_;
   size_t tail_;
+  mutable std::shared_mutex mutex_;
 };
 }  // namespace replay_buffer

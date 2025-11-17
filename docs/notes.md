@@ -117,6 +117,41 @@
 - Explicit template instantiation (rarely used)
 - Chrome's philosophy: "Pay at compile time, not at runtime"
 
+### November 17, 2024 (continued) - Phase 1.5 Complete (ROB-9)
+
+**Completed:**
+- ✅ Thread safety with std::shared_mutex
+- ✅ Reader-writer lock pattern implementation
+- ✅ Thread safety tests (concurrent adds, reads/writes, queries)
+- ✅ Fixed deadlock bug by inlining condition checks
+
+**Key Learnings:**
+1. **std::shared_mutex** - Reader-writer locks allow multiple concurrent readers
+2. **Lock types** - std::lock_guard (exclusive), std::shared_lock (shared)
+3. **RAII locking** - Automatic unlock via destructors, exception-safe
+4. **mutable keyword** - Allows mutex locking in const methods
+5. **Deadlock prevention** - Never call locking methods from within locked sections
+6. **std::atomic** - Lock-free coordination for thread communication
+
+**Bug Fixed:**
+- Deadlock in `add()` method caused by calling `is_full()` (which acquires lock) while already holding the lock
+- Resolved by inlining the check: changed `if (!is_full())` to `if (size_ != capacity_)`
+- This avoids recursive locking on non-recursive mutex
+
+**Design Decisions:**
+- Used std::shared_mutex instead of std::mutex (better for read-heavy workloads)
+- Non-const accessors use exclusive lock (caller might modify)
+- Const accessors use shared lock (read-only, allows concurrency)
+- Made mutex mutable to allow locking in const methods
+
+**Discussion Highlights:**
+- Deadlock diagnosis and prevention strategies
+- Reader-writer lock benefits for replay buffer use case
+- Trade-off: inlining checks vs private helper methods (chose inline for simplicity)
+- Chrome's extensive use of locks (base::Lock, base::AutoLock)
+
+**Next Up:** Uniform random sampling (ROB-10)
+
 ## Open Questions
 - Should we use std::pmr for memory pools later?
 - Lock-free circular buffer possible without boost::lockfree?

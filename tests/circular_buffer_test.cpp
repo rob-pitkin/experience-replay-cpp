@@ -3,6 +3,7 @@
 #include <replay_buffer/transition.h>
 
 #include <string>
+#include <thread>
 
 TEST(ConstructionTest, ValidCapacity) {
   replay_buffer::CircularBuffer<int> buffer(10);
@@ -209,4 +210,105 @@ TEST(TemplateTest, WorksWithDifferentTypes) {
   EXPECT_EQ(transition_buffer[2].next_observation, 12);
   EXPECT_EQ(transition_buffer[2].done, false);
   EXPECT_EQ(transition_buffer[2].priority, 3.0f);
+}
+
+TEST(ThreadSafetyTest, ConcurrentAdds) {
+  replay_buffer::CircularBuffer<int> buffer(1000);
+
+  std::vector<std::thread> threads;
+  // Create 10 threads, each adding 100 elements, starting from 1 to 1000
+  for (int t = 0; t < 10; ++t) {
+    threads.emplace_back([&buffer, t]() {
+      for (int i = 0; i < 100; ++i) {
+        buffer.add(t * 100 + i);
+      }
+    });
+  }
+
+  for (std::thread& thread : threads) {
+    thread.join();
+  }
+
+  EXPECT_EQ(buffer.size(), 1000);
+  EXPECT_TRUE(buffer.is_full());
+}
+
+TEST(ThreadSafetyTest, ConcurrentReadsAndWrites) {
+  replay_buffer::CircularBuffer<int> buffer(100);
+
+  for (int i = 0; i < 100; ++i) {
+    buffer.add(1);
+  }
+
+  std::atomic<bool> stop(false);
+  std::atomic<int> read_count(0);
+
+  std::thread writer([&]() {
+    int value = 100;
+    while (!stop.load()) {
+      buffer.add(value++);
+      std::this_thread::sleep_for(std::chrono::microseconds(10));
+    }
+  });
+
+  std::vector<std::thread> readers;
+  for (int i = 0; i < 5; i++) {
+    readers.emplace_back([&]() {
+      while (!stop.load()) {
+        size_t size = buffer.size();
+        if (size > 0) {
+          int value = buffer[size / 2];
+          (void)value;
+          read_count++;
+        }
+      }
+    });
+  }
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  stop.store(true);
+
+  writer.join();
+  for (std::thread& reader : readers) {
+    reader.join();
+  }
+
+  EXPECT_GT(read_count.load(), 0);
+  std::cout << "Completed " << read_count.load() << " concurrent reads"
+            << std::endl;
+}
+
+TEST(ThreadSafetyTest, ConcurrentQueries) {
+  replay_buffer::CircularBuffer<int> buffer(50);
+
+  for (int i = 0; i < 25; ++i) {
+    buffer.add(i);
+  }
+
+  std::atomic<bool> stop(false);
+
+  std::vector<std::thread> threads;
+  for (int i = 0; i < 5; ++i) {
+    threads.emplace_back([&]() {
+      while (!stop.load()) {
+        EXPECT_GE(buffer.size(), 0);
+        EXPECT_LE(buffer.size(), buffer.capacity());
+        EXPECT_EQ(buffer.capacity(), 50);
+
+        if (!buffer.is_empty()) {
+          EXPECT_GT(buffer.size(), 0);
+        }
+        if (buffer.is_full()) {
+          EXPECT_EQ(buffer.size(), buffer.capacity());
+        }
+      }
+    });
+  }
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  stop.store(true);
+
+  for (std::thread& thread : threads) {
+    thread.join();
+  }
 }
