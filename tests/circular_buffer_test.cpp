@@ -312,3 +312,135 @@ TEST(ThreadSafetyTest, ConcurrentQueries) {
     thread.join();
   }
 }
+
+TEST(SamplingTest, SamplesCorrectBatchSize) {
+  replay_buffer::CircularBuffer<int> buffer(100);
+
+  for (int i = 0; i < 50; ++i) {
+    buffer.add(i);
+  }
+
+  std::vector<int> batch = buffer.sample(10);
+
+  EXPECT_EQ(batch.size(), 10);
+}
+
+TEST(SamplingTest, ThrowsIfBatchSizeTooLarge) {
+  replay_buffer::CircularBuffer<int> buffer(3);
+  buffer.add(1);
+  buffer.add(2);
+  buffer.add(3);
+
+  EXPECT_THROW(buffer.sample(4), std::invalid_argument);
+}
+
+TEST(SamplingTest, ThrowsIfBatchSizeZero) {
+  replay_buffer::CircularBuffer<int> buffer(3);
+  buffer.add(1);
+  buffer.add(2);
+  buffer.add(3);
+
+  EXPECT_THROW(buffer.sample(0), std::invalid_argument);
+}
+
+TEST(SamplingTest, ReturnsValidElements) {
+  replay_buffer::CircularBuffer<int> buffer(10);
+
+  for (int i = 10; i < 20; ++i) {
+    buffer.add(i);
+  }
+
+  std::vector<int> batch = buffer.sample(5);
+  EXPECT_EQ(batch.size(), 5);
+  for (const int& elem : batch) {
+    EXPECT_GE(elem, 10);
+    EXPECT_LT(elem, 20);
+  }
+}
+
+TEST(SamplingTest, WorksAfterWraparound) {
+  replay_buffer::CircularBuffer<int> buffer(5);
+
+  for (int i = 0; i < 10; ++i) {
+    buffer.add(i);
+  }
+
+  std::vector<int> batch = buffer.sample(5);
+
+  for (const int& elem : batch) {
+    EXPECT_GE(elem, 5);
+    EXPECT_LT(elem, 10);
+  }
+}
+
+TEST(SamplingTest, UniformDistribution) {
+  replay_buffer::CircularBuffer<int> buffer(10);
+
+  for (int i = 0; i < 10; ++i) {
+    buffer.add(i);
+  }
+
+  std::vector<int> counts(10, 0);
+  const int num_samples = 10000;
+
+  for (int i = 0; i < num_samples; ++i) {
+    std::vector<int> batch = buffer.sample(1);
+    counts[batch[0]]++;
+  }
+
+  for (int i = 0; i < 10; ++i) {
+    EXPECT_GT(counts[i], 700);
+    EXPECT_LT(counts[i], 1300);
+  }
+}
+
+TEST(SamplingTest, ConcurrentSampling) {
+  replay_buffer::CircularBuffer<int> buffer(1000);
+
+  // Fill buffer
+  for (int i = 0; i < 1000; ++i) {
+    buffer.add(i);
+  }
+
+  std::vector<std::thread> threads(10);
+  std::atomic<int> successful_samples(0);
+
+  for (int t = 0; t < 10; ++t) {
+    threads[t] = std::thread([&]() {
+      for (int i = 0; i < 100; ++i) {
+        std::vector<int> batch = buffer.sample(32);
+        if (batch.size() == 32) {
+          successful_samples++;
+        }
+      }
+    });
+  }
+
+  for (std::thread& thread : threads) {
+    thread.join();
+  }
+
+  EXPECT_EQ(successful_samples, 1000);
+}
+
+TEST(SamplingTest, WorksWithTransitions) {
+  using Transition = replay_buffer::Transition<int, int>;
+  replay_buffer::CircularBuffer<Transition> buffer(10);
+
+  for (int i = 0; i < 10; ++i) {
+    buffer.add({
+      i, i * 2, float(i), i + 1, false, 1.0f
+    });
+  }
+
+  std::vector<Transition> batch = buffer.sample(5);
+  EXPECT_EQ(batch.size(), 5);
+
+  for (const Transition& t : batch) {
+    EXPECT_EQ(t.action, t.observation * 2);
+    EXPECT_EQ(t.reward, float(t.observation));
+    EXPECT_EQ(t.next_observation, t.observation + 1);
+    EXPECT_EQ(t.done, false);
+    EXPECT_EQ(t.priority, 1.0f);
+  }
+}

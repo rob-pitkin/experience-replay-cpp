@@ -6,6 +6,7 @@
 /// Provides O(1) add and access operations.
 
 #include <cstddef>
+#include <random>
 #include <shared_mutex>
 #include <stdexcept>
 #include <vector>
@@ -27,6 +28,7 @@ class CircularBuffer {
     buffer_.resize(capacity_);
     head_ = 0;
     tail_ = 0;
+    gen_ = std::mt19937(std::random_device{}());
   }
 
   size_t size() const {
@@ -106,6 +108,29 @@ class CircularBuffer {
     return buffer_[(head_ + index) % capacity_];
   }
 
+  std::vector<T> sample(size_t batch_size) const {
+    std::shared_lock<std::shared_mutex> lock(mutex_);
+
+    if (batch_size <= 0) {
+      throw std::invalid_argument("Batch size must be > 0");
+    }
+    if (batch_size > size_) {
+      throw std::invalid_argument("Batch size exceeds buffer size");
+    }
+
+    std::vector<T> result;
+    result.reserve(batch_size);
+
+    std::uniform_int_distribution<size_t> dist(0, size_ - 1);
+
+    for (size_t i = 0; i < batch_size; i++) {
+      size_t index = dist(gen_);
+      result.push_back(buffer_[(head_ + index) % capacity_]);
+    }
+
+    return result;
+  }
+
  private:
   size_t capacity_;
   std::vector<T> buffer_;
@@ -113,5 +138,6 @@ class CircularBuffer {
   size_t head_;
   size_t tail_;
   mutable std::shared_mutex mutex_;
+  mutable std::mt19937 gen_;
 };
 }  // namespace replay_buffer

@@ -6,7 +6,18 @@
   - Write instruction steps for me to follow to complete the task.
   - Don't be too revealing with written hints or solutions. I want to learn by doing or asking questions.
 - For discussion questions, I want to discuss them with you one at a time and don't give me the answer outright. I want to try answering the question and check my answer with you.
-- Write all instruction files for each taskin the `.claude/` directory.
+- Write all instruction files for each task in the `.claude/` directory.
+
+## Instruction File Guidelines
+When creating instruction files in `.claude/`:
+- **Explain concepts and approaches at a high level** - describe what needs to be done and why, not the exact code
+- **Avoid writing out solution code** - no code blocks with the full implementation
+- **Provide hints sparingly** - only when necessary, like:
+  - Key function names to use (e.g., "use `std::uniform_int_distribution`")
+  - Critical declaration patterns (e.g., "make the member `mutable`")
+  - Gotchas to avoid (e.g., "don't call locking methods from locked contexts")
+- **Use TODO comments in actual code files** instead of solution code in the guide
+- **Focus on learning objectives** - what concepts should be understood, not what code to write
 
 # Docs
 - Always refer back to `docs/replay_buffer_spec.md` for the project specification.

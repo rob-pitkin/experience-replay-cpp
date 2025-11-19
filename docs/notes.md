@@ -152,6 +152,41 @@
 
 **Next Up:** Uniform random sampling (ROB-10)
 
+### November 18, 2024 - Phase 1.6 Complete (ROB-10)
+
+**Completed:**
+- ✅ Uniform random sampling with modern C++ `<random>`
+- ✅ std::mt19937 random number generator
+- ✅ Thread-safe sampling with existing locks
+- ✅ Comprehensive sampling tests (8 tests including statistical validation)
+
+**Key Learnings:**
+1. **Modern C++ RNG** - std::mt19937 generator + std::uniform_int_distribution
+2. **std::random_device** - True randomness from OS for seeding
+3. **Mutable for const methods** - RNG needs to be mutable to modify state in const sample()
+4. **Vector reserve()** - Pre-allocate to avoid reallocations during sampling
+5. **Sampling with replacement** - Same element can appear multiple times in batch (standard for RL)
+6. **Statistical testing** - Verified uniform distribution with 10,000 samples
+
+**Design Decisions:**
+- Sample with replacement (standard in RL literature)
+- Validate batch_size > 0 and batch_size <= buffer size
+- Direct buffer access in sample() to avoid deadlock (don't call operator[])
+- Non-deterministic seeding (std::random_device) for production use
+
+**Discussion Highlights:**
+- Batch size vs buffer size: batch should always be <= buffer size in practice
+- "With replacement" means same element can appear twice, NOT that batch > size
+- Real RL training waits until buffer.size() >= batch_size before sampling
+- Chrome uses crypto-secure RNG (base::RandGenerator), we use statistical RNG (mt19937)
+
+**Instruction File Feedback:**
+- Future guides should explain concepts at high level, not write solution code
+- Provide hints about functions/patterns, but let user figure out implementation
+- Focus on learning objectives, not code-to-copy
+
+**Next Up:** Benchmarking (ROB-11)
+
 ## Open Questions
 - Should we use std::pmr for memory pools later?
 - Lock-free circular buffer possible without boost::lockfree?
