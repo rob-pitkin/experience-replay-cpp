@@ -56,6 +56,7 @@ docs/timeline.md
 docs/CLAUDE.md
 docs/cmake_primer.md
 docs/googletest_patterns.md
+docs/sum_tree_primer.md
 
 # Clangd cache
 .cache
