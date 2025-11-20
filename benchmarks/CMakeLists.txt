@@ -1,0 +1,3 @@
+add_executable(replay_buffer_benchmarks circular_buffer_benchmark.cpp)
+
+target_link_libraries(replay_buffer_benchmarks PRIVATE benchmark::benchmark_main)
