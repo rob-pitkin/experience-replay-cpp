@@ -2,7 +2,7 @@
 
 ## Current Status
 **Phase:** 2 - Prioritized Replay
-**Current Task:** ROB-12 - Sum-Tree Data Structure (Ready to start)
+**Current Task:** ROB-13 - Prioritized Replay Buffer (Ready to start)
 **Started:** November 20, 2024
 
 ## Phase 1: Core Single-Process Implementation ✅ COMPLETED
@@ -28,8 +28,8 @@
 **Estimated:** 1-2 weeks
 
 **Tasks:**
-- [ ] **ROB-12**: Sum-tree data structure
-- [ ] **ROB-13**: Prioritized replay buffer
+- [x] **ROB-12**: Sum-tree data structure (Completed November 26, 2024)
+- [ ] **ROB-13**: Prioritized replay buffer (In Progress)
 - [ ] **ROB-14**: Priority updates
 - [ ] **ROB-15**: Importance sampling weights
 - [ ] **ROB-16**: Benchmarking prioritized sampling
@@ -80,7 +80,8 @@
 - [x] Concurrency primitives (mutex, shared_mutex)
 - [x] Modern random number generation
 - [x] Performance benchmarking
-- [ ] Binary tree data structures
+- [x] Binary tree data structures (sum-tree)
+- [x] Array-based tree storage and index arithmetic
 - [ ] Advanced template metaprogramming
 - [ ] Lock-free data structures
 
@@ -89,7 +90,7 @@
 - [x] Test-driven development
 - [x] Performance benchmarking
 - [x] Code style and tooling (clang-format, clang-tidy)
-- [ ] Algorithm complexity analysis
+- [x] Algorithm complexity analysis (O(log n) operations)
 - [ ] Profiling and optimization
 
 ## Notes

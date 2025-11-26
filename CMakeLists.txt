@@ -23,6 +23,7 @@ FetchContent_Declare(
     GIT_TAG v1.9.4
 )
 
+set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googleBenchmark)
 
 # Set C++ standard

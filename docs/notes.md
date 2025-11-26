@@ -93,12 +93,48 @@
 ### Phase 2: Prioritized Replay (In Progress)
 **Started:** November 20, 2024
 
-**Planned Work:**
-- ROB-12: Sum-tree data structure
+**Completed Work:**
+- ✅ ROB-12: Sum-tree data structure (November 26, 2024)
+
+**In Progress:**
 - ROB-13: Prioritized replay buffer
+
+**Planned Work:**
 - ROB-14: Priority updates
 - ROB-15: Importance sampling weights
 - ROB-16: Benchmarking prioritized sampling
+
+#### ROB-12: Sum-Tree Data Structure ✅
+**Completed:** November 26, 2024
+
+**Implementation:**
+- Created `include/replay_buffer/sum_tree.h` - fixed-capacity binary tree for O(log n) proportional sampling
+- Array-based storage using 0-indexed convention (root at index 0, leaves start at capacity-1)
+- Core operations: `set()`, `get()`, `sample()`, `total()` - all O(log n) or better
+- Prefix-sum sampling algorithm for proportional selection
+- Delta propagation for efficient priority updates
+
+**Key Design Decisions:**
+- Not templated - stores `float` priorities only (SumTree is orthogonal to data storage)
+- No thread safety - deferred to wrapper layer for coordinated locking
+- No size tracking - fixed capacity, wrapper handles size logic
+- Bounds checking on capacity only
+
+**Bugs Fixed:**
+- Infinite loop from unsigned arithmetic in parent traversal (`while (parent >= 0)` wrapped)
+- Wrong node comparison in `sample()` (compared current node instead of left child)
+- Removed `size_` member to avoid synchronization complexity
+
+**Tests Created:**
+- `tests/sum_tree_test.cpp` with basic functionality tests
+- Construction, set/get, total, sampling, tree propagation verified
+- User opted to skip statistical distribution tests (confident in implementation)
+
+**Learnings:**
+- Binary tree index arithmetic (parent/child calculations)
+- Prefix-sum search algorithm
+- Array-based tree storage (cache-friendly, no pointer overhead)
+- Separation of concerns (priorities vs data storage)
 
 ## Open Questions
 - Should we use std::pmr for memory pools later?
