@@ -51,11 +51,13 @@ class CircularBuffer {
     return size_ == 0;
   }
 
-  void add(const T& item) {
+  size_t add(const T& item) {
     std::lock_guard<std::shared_mutex> lock(mutex_);
+    size_t stored_index;
     // Case 1: Buffer is not full, insert at tail and increment tail
     if (size_ != capacity_) {
       buffer_[tail_] = item;
+      stored_index = tail_;
       tail_ = (tail_ + 1) % capacity_;
       size_++;
     }
@@ -63,9 +65,12 @@ class CircularBuffer {
     // head
     else {
       buffer_[tail_] = item;
+      stored_index = tail_;
       tail_ = (tail_ + 1) % capacity_;
       head_ = (head_ + 1) % capacity_;
     }
+    // Return the index of the added item
+    return stored_index;
   }
 
   void clear() {

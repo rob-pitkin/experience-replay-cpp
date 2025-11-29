@@ -24,9 +24,9 @@ TEST(AddTest, AddsElementsWhenNotFull) {
   replay_buffer::CircularBuffer<int> buffer(5);
 
   // Add 3 elements when not full
-  buffer.add(1);
-  buffer.add(2);
-  buffer.add(3);
+  const size_t index_1 = buffer.add(1);
+  const size_t index_2 = buffer.add(2);
+  const size_t index_3 = buffer.add(3);
 
   // Verify the size, emptiness, and contents
   EXPECT_EQ(buffer.size(), 3);
@@ -35,6 +35,9 @@ TEST(AddTest, AddsElementsWhenNotFull) {
   EXPECT_EQ(buffer[0], 1);
   EXPECT_EQ(buffer[1], 2);
   EXPECT_EQ(buffer[2], 3);
+  EXPECT_EQ(index_1, 0);
+  EXPECT_EQ(index_2, 1);
+  EXPECT_EQ(index_3, 2);
   EXPECT_EQ(buffer.at(0), 1);
   EXPECT_EQ(buffer.at(1), 2);
   EXPECT_EQ(buffer.at(2), 3);
@@ -44,11 +47,11 @@ TEST(AddTest, FillsToCapacity) {
   replay_buffer::CircularBuffer<int> buffer(5);
 
   // Add 5 elements to fill the buffer
-  buffer.add(1);
-  buffer.add(2);
-  buffer.add(3);
-  buffer.add(4);
-  buffer.add(5);
+  const size_t index_1 = buffer.add(1);
+  const size_t index_2 = buffer.add(2);
+  const size_t index_3 = buffer.add(3);
+  const size_t index_4 = buffer.add(4);
+  const size_t index_5 = buffer.add(5);
 
   // Verify the size, fullness, and contents
   EXPECT_EQ(buffer.size(), 5);
@@ -59,6 +62,11 @@ TEST(AddTest, FillsToCapacity) {
   EXPECT_EQ(buffer[2], 3);
   EXPECT_EQ(buffer[3], 4);
   EXPECT_EQ(buffer[4], 5);
+  EXPECT_EQ(index_1, 0);
+  EXPECT_EQ(index_2, 1);
+  EXPECT_EQ(index_3, 2);
+  EXPECT_EQ(index_4, 3);
+  EXPECT_EQ(index_5, 4);
   EXPECT_EQ(buffer.at(0), 1);
   EXPECT_EQ(buffer.at(1), 2);
   EXPECT_EQ(buffer.at(2), 3);
@@ -69,11 +77,11 @@ TEST(AddTest, FillsToCapacity) {
 TEST(AddTest, WrapsAroundWhenFull) {
   replay_buffer::CircularBuffer<int> buffer(3);
   // Add 3 elements to fill the buffer
-  buffer.add(1);
-  buffer.add(2);
-  buffer.add(3);
+  const size_t index_1 = buffer.add(1);
+  const size_t index_2 = buffer.add(2);
+  const size_t index_3 = buffer.add(3);
   // Add 4th element to wrap around
-  buffer.add(4);
+  const size_t index_4 = buffer.add(4);
   // Verify the size, fullness, and contents
   EXPECT_EQ(buffer.size(), 3);
   EXPECT_TRUE(buffer.is_full());
@@ -85,6 +93,10 @@ TEST(AddTest, WrapsAroundWhenFull) {
   EXPECT_EQ(buffer.at(1), 3);
   EXPECT_EQ(buffer.at(2), 4);
   EXPECT_EQ(buffer.at(buffer.size() - 1), 4);
+  EXPECT_EQ(index_1, 0);
+  EXPECT_EQ(index_2, 1);
+  EXPECT_EQ(index_3, 2);
+  EXPECT_EQ(index_4, 0);
 }
 
 TEST(AccessTest, OperatorBracket) {
@@ -428,9 +440,7 @@ TEST(SamplingTest, WorksWithTransitions) {
   replay_buffer::CircularBuffer<Transition> buffer(10);
 
   for (int i = 0; i < 10; ++i) {
-    buffer.add({
-      i, i * 2, float(i), i + 1, false, 1.0f
-    });
+    buffer.add({i, i * 2, float(i), i + 1, false, 1.0f});
   }
 
   std::vector<Transition> batch = buffer.sample(5);
