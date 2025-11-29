@@ -32,7 +32,7 @@ static void BM_CircularBufferSample(benchmark::State& state) {
 static void BM_CircularBufferConcurrentAdd(benchmark::State& state) {
   // access first parameter
   int buffer_size = state.range(0);
-  replay_buffer::CircularBuffer<int> buffer(buffer_size);
+  static replay_buffer::CircularBuffer<int> buffer(buffer_size);
 
   if (state.thread_index() == 0) {
     for (int i = 0; i < buffer_size; ++i) {
@@ -48,7 +48,7 @@ static void BM_CircularBufferConcurrentAdd(benchmark::State& state) {
 static void BM_CircularBufferConcurrentSample(benchmark::State& state) {
   // access first parameter
   int buffer_size = state.range(0);
-  replay_buffer::CircularBuffer<int> buffer(buffer_size);
+  static replay_buffer::CircularBuffer<int> buffer(buffer_size);
 
   if (state.thread_index() == 0) {
     for (int i = 0; i < buffer_size; ++i) {
@@ -64,7 +64,7 @@ static void BM_CircularBufferConcurrentSample(benchmark::State& state) {
 static void BM_CircularBufferConcurrentRead(benchmark::State& state) {
   // access first parameter
   int buffer_size = state.range(0);
-  replay_buffer::CircularBuffer<int> buffer(buffer_size);
+  static replay_buffer::CircularBuffer<int> buffer(buffer_size);
 
   // Prefill buffer
   if (state.thread_index() == 0) {
@@ -82,7 +82,7 @@ static void BM_CircularBufferConcurrentRead(benchmark::State& state) {
 static void BM_CircularBufferConcurrentWriteAndRead(benchmark::State& state) {
   // access first parameter
   int buffer_size = state.range(0);
-  replay_buffer::CircularBuffer<int> buffer(buffer_size);
+  static replay_buffer::CircularBuffer<int> buffer(buffer_size);
 
   // Prefill buffer
   if (state.thread_index() == 0) {

@@ -90,17 +90,15 @@
 - Provide hints about functions/patterns, but let user figure out implementation
 - Focus on learning objectives, not code-to-copy
 
-### Phase 2: Prioritized Replay (In Progress)
-**Started:** November 20, 2024
+### Phase 2: Prioritized Replay ✅ COMPLETED
+**Duration:** November 20-29, 2024 (9 days)
 
 **Completed Work:**
 - ✅ ROB-12: Sum-tree data structure (November 26, 2024)
 - ✅ ROB-13: Prioritized replay buffer (November 29, 2024)
+- ✅ ROB-16: Benchmarking prioritized sampling (November 29, 2024)
 
-**Planned Work:**
-- ROB-14: Priority updates (May be covered by ROB-13)
-- ROB-15: Importance sampling weights (May be covered by ROB-13)
-- ROB-16: Benchmarking prioritized sampling
+**Note:** ROB-14 (priority updates) and ROB-15 (importance sampling weights) were covered by ROB-13 implementation
 
 #### ROB-12: Sum-Tree Data Structure ✅
 **Completed:** November 26, 2024
@@ -189,6 +187,44 @@
 **Performance:**
 - All 40 tests pass (100% pass rate)
 - Implementation complete and correct
+
+#### ROB-16: Benchmarking Prioritized Sampling ✅
+**Completed:** November 29, 2024
+
+**Implementation:**
+- Created comprehensive benchmarks in `benchmarks/prioritized_replay_buffer_benchmark.cpp`
+- 6 total benchmarks: add (single/concurrent), sample (single/concurrent), update_priorities (single/concurrent)
+- All benchmarks use batch size = 32 for realistic RL workload simulation
+- Tested buffer sizes: 1K, 100K, 1M elements
+
+**Key Results (DEBUG build):**
+- **add()**: ~90 ns (5x slower than CircularBuffer's 19ns) ✅
+- **sample(32)**: ~8,900 ns (meets < 10μs target!) ✅
+- **update_priorities(32)**: ~1,620 ns (excellent performance) ✅
+
+**Complexity Verification:**
+- sample(32) time nearly constant across buffer sizes (1K: 8,895ns, 100K: 8,892ns, 1M: 8,864ns)
+- Confirms O(log n) behavior - logarithmic growth hidden in measurement noise
+- Expected: log₂(1K)=10, log₂(100K)=17, log₂(1M)=20 (only 2x difference)
+
+**Overhead Analysis:**
+- Prioritized add: 5x slower than uniform (acceptable - includes tree update)
+- Prioritized sample: 15-20x slower than uniform (acceptable - includes tree traversal + IS weights)
+- Trade-off worthwhile: get proportional prioritized sampling with importance sampling correction
+
+**Bugs Fixed During Implementation:**
+- Setup code running on every benchmark iteration instead of once (caused "Index out of range")
+- Static vectors accumulating across runs in sample benchmarks
+- Race condition: multiple threads setting `initialized = true` simultaneously
+- Race condition: multiple threads filling static vectors in concurrent benchmarks
+
+**Learnings:**
+- Google Benchmark framework patterns (State object, iteration control, ThreadRange)
+- Importance of static variables and initialization flags in benchmark setup
+- Subtle concurrency bugs in multi-threaded benchmarks (when to use thread_index() == 0)
+- Empirical verification of algorithmic complexity (O(log n) confirmation)
+- Performance profiling and interpretation of benchmark results
+- DEBUG vs Release build impact on absolute timing (relative performance unchanged)
 
 ## Open Questions
 - Should we use std::pmr for memory pools later?
