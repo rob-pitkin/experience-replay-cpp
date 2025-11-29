@@ -6,8 +6,7 @@
 /// store RL experience transitions.
 
 namespace replay_buffer {
-/// @brief Represents a single RL experience transition (s, a, r, s', done,
-/// priority).
+/// @brief Represents a single RL experience transition (s, a, r, s', done).
 /// @tparam Observation Type of state observations
 /// @tparam Action Type of actions taken
 template <typename Observation, typename Action>
@@ -17,7 +16,6 @@ struct Transition {
   float reward;
   Observation next_observation;
   bool done;
-  float priority = 1.0f;
 
   /// @brief Default constructor for Transition.
   Transition() = default;
@@ -28,14 +26,11 @@ struct Transition {
   /// @param r Reward
   /// @param next_obs Next observation
   /// @param d Done
-  /// @param p Priority
-  Transition(Observation obs, Action act, float r, Observation next_obs, bool d,
-             float p = 1.0f)
+  Transition(Observation obs, Action act, float r, Observation next_obs, bool d)
       : observation(obs),
         action(act),
         reward(r),
         next_observation(next_obs),
-        done(d),
-        priority(p) {}
+        done(d) {}
 };
 }  // namespace replay_buffer

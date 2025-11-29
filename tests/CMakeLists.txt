@@ -1,4 +1,4 @@
-add_executable(replay_buffer_tests hello_test.cpp transition_test.cpp circular_buffer_test.cpp sum_tree_test.cpp)
+add_executable(replay_buffer_tests hello_test.cpp transition_test.cpp circular_buffer_test.cpp sum_tree_test.cpp prioritized_replay_buffer_test.cpp)
 
 target_link_libraries(replay_buffer_tests PRIVATE gtest_main)
 

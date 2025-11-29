@@ -11,7 +11,6 @@ TEST(TransitionTest, WorksWithSimpleTypes) {
   t.reward = 1.5f;
   t.next_observation = 3;
   t.done = false;
-  t.priority = 1.0f;
 
   // Verify values
   EXPECT_EQ(1, t.observation);
@@ -19,12 +18,11 @@ TEST(TransitionTest, WorksWithSimpleTypes) {
   EXPECT_FLOAT_EQ(1.5f, t.reward);
   EXPECT_EQ(3, t.next_observation);
   EXPECT_FALSE(t.done);
-  EXPECT_FLOAT_EQ(1.0f, t.priority);
 }
 
 TEST(TransitionTest, WorksWithVectorObservations) {
   replay_buffer::Transition<std::vector<float>, int> t = {
-      {1.0f, 2.0f, 3.0f}, 2, 1.5f, {4.0f, 5.0f, 6.0f}, false, 1.0f};
+      {1.0f, 2.0f, 3.0f}, 2, 1.5f, {4.0f, 5.0f, 6.0f}, false};
 
   // Verify values
   EXPECT_FLOAT_EQ(1.0f, t.observation[0]);
@@ -36,5 +34,4 @@ TEST(TransitionTest, WorksWithVectorObservations) {
   EXPECT_FLOAT_EQ(5.0f, t.next_observation[1]);
   EXPECT_FLOAT_EQ(6.0f, t.next_observation[2]);
   EXPECT_FALSE(t.done);
-  EXPECT_FLOAT_EQ(1.0f, t.priority);
 }

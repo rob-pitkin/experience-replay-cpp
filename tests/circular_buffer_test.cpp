@@ -198,9 +198,9 @@ TEST(TemplateTest, WorksWithDifferentTypes) {
 
   replay_buffer::CircularBuffer<replay_buffer::Transition<int, int>>
       transition_buffer(3);
-  transition_buffer.add({1, 2, 3.0f, 4, false, 1.0f});
-  transition_buffer.add({5, 6, 7.0f, 8, true, 2.0f});
-  transition_buffer.add({9, 10, 11.0f, 12, false, 3.0f});
+  transition_buffer.add({1, 2, 3.0f, 4, false});
+  transition_buffer.add({5, 6, 7.0f, 8, true});
+  transition_buffer.add({9, 10, 11.0f, 12, false});
   EXPECT_EQ(transition_buffer.size(), 3);
   EXPECT_TRUE(transition_buffer.is_full());
   EXPECT_FALSE(transition_buffer.is_empty());
@@ -209,19 +209,16 @@ TEST(TemplateTest, WorksWithDifferentTypes) {
   EXPECT_EQ(transition_buffer[0].reward, 3.0f);
   EXPECT_EQ(transition_buffer[0].next_observation, 4);
   EXPECT_EQ(transition_buffer[0].done, false);
-  EXPECT_EQ(transition_buffer[0].priority, 1.0f);
   EXPECT_EQ(transition_buffer[1].observation, 5);
   EXPECT_EQ(transition_buffer[1].action, 6);
   EXPECT_EQ(transition_buffer[1].reward, 7.0f);
   EXPECT_EQ(transition_buffer[1].next_observation, 8);
   EXPECT_EQ(transition_buffer[1].done, true);
-  EXPECT_EQ(transition_buffer[1].priority, 2.0f);
   EXPECT_EQ(transition_buffer[2].observation, 9);
   EXPECT_EQ(transition_buffer[2].action, 10);
   EXPECT_EQ(transition_buffer[2].reward, 11.0f);
   EXPECT_EQ(transition_buffer[2].next_observation, 12);
   EXPECT_EQ(transition_buffer[2].done, false);
-  EXPECT_EQ(transition_buffer[2].priority, 3.0f);
 }
 
 TEST(ThreadSafetyTest, ConcurrentAdds) {
@@ -440,7 +437,7 @@ TEST(SamplingTest, WorksWithTransitions) {
   replay_buffer::CircularBuffer<Transition> buffer(10);
 
   for (int i = 0; i < 10; ++i) {
-    buffer.add({i, i * 2, float(i), i + 1, false, 1.0f});
+    buffer.add({i, i * 2, float(i), i + 1, false});
   }
 
   std::vector<Transition> batch = buffer.sample(5);
@@ -451,6 +448,5 @@ TEST(SamplingTest, WorksWithTransitions) {
     EXPECT_EQ(t.reward, float(t.observation));
     EXPECT_EQ(t.next_observation, t.observation + 1);
     EXPECT_EQ(t.done, false);
-    EXPECT_EQ(t.priority, 1.0f);
   }
 }
