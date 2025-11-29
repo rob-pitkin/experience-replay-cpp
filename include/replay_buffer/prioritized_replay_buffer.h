@@ -100,10 +100,10 @@ class PrioritizedReplayBuffer {
                          const std::vector<float>& td_errors) {
     std::lock_guard<std::shared_mutex> lock(mutex_);
     for (size_t i = 0; i < indices.size(); i++) {
-      tree_.set(indices[i],
-                std::pow(std::abs(td_errors[i]) + epsilon_, alpha_));
-      if (max_priority_ < td_errors[i]) {
-        max_priority_ = td_errors[i];
+      float priority = std::pow(std::abs(td_errors[i]) + epsilon_, alpha_);
+      tree_.set(indices[i], priority);
+      if (max_priority_ < priority) {
+        max_priority_ = priority;
       }
     }
   }

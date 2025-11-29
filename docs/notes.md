@@ -95,13 +95,11 @@
 
 **Completed Work:**
 - ✅ ROB-12: Sum-tree data structure (November 26, 2024)
-
-**In Progress:**
-- ROB-13: Prioritized replay buffer
+- ✅ ROB-13: Prioritized replay buffer (November 29, 2024)
 
 **Planned Work:**
-- ROB-14: Priority updates
-- ROB-15: Importance sampling weights
+- ROB-14: Priority updates (May be covered by ROB-13)
+- ROB-15: Importance sampling weights (May be covered by ROB-13)
 - ROB-16: Benchmarking prioritized sampling
 
 #### ROB-12: Sum-Tree Data Structure ✅
@@ -135,6 +133,62 @@
 - Prefix-sum search algorithm
 - Array-based tree storage (cache-friendly, no pointer overhead)
 - Separation of concerns (priorities vs data storage)
+
+#### ROB-13: Prioritized Replay Buffer ✅
+**Completed:** November 29, 2024
+
+**Implementation:**
+- Created `include/replay_buffer/prioritized_replay_buffer.h` - integrates CircularBuffer and SumTree for proportional prioritized sampling
+- Wrapper architecture: coordinates two data structures with single std::shared_mutex
+- Core operations: `add()`, `sample()`, `update_priorities()` with importance sampling weights
+- Configuration: alpha (priority exponent), beta (IS weight exponent), epsilon (stability constant)
+- Returns `PrioritizedSample` struct with transition, weight, and index
+
+**Key Design Decisions:**
+- Modified CircularBuffer::add() to return physical index (needed for sum-tree coordination)
+- Wrapper-level locking (neither CircularBuffer nor SumTree need own locks)
+- Member RNG (`mutable std::mt19937 gen_`) to avoid creating new RNG each call
+- New transitions get max_priority to ensure they're sampled at least once
+- Priority transformation: `(|TD-error| + ε)^α` applied in update_priorities()
+- IS weight formula: `weight = (N × P(i))^(-β)` where N = buffer.size()
+
+**Critical Implementation Details:**
+- Constructor initializer list order matches member declaration order
+- max_priority default: 1.0f (reasonable middle ground)
+- Alpha exponent applied correctly: epsilon added BEFORE alpha exponent
+- max_priority comparison with transformed priority, not raw TD-error
+- Used exclusive locks for sample() due to non-thread-safe RNG
+
+**Bugs Fixed:**
+- Constructor member initialization order (had to use initializer list, not assignment)
+- IS weight calculation used batch_size instead of buffer.size() (N should be total buffer size)
+- Alpha exponent order (epsilon added after exponent instead of before)
+- max_priority comparison with raw td_error instead of transformed priority
+
+**Tests Created:**
+- `tests/prioritized_replay_buffer_test.cpp` with 5 comprehensive tests
+- Construction test with config validation
+- Invalid construction test (all error cases)
+- Add transitions test (size tracking)
+- Sample test (structure validation)
+- **Proportional distribution test** (THE CRITICAL TEST):
+  - Set priorities [1, 2, 3, 4] with alpha=1.0 (direct proportionality)
+  - Sample 10,000 times and verify distribution is ~10%, 20%, 30%, 40% (±5%)
+  - This validates the entire priority sampling pipeline!
+
+**Learnings:**
+- Data structure composition (combining specialized structures)
+- Probability and sampling (discrete distributions, inverse transform sampling)
+- Importance sampling for bias correction
+- Coordinated thread safety across multiple structures
+- When to use exclusive vs shared locks
+- Physical vs logical indexing in circular buffers
+- Priority transformation pipeline (TD-error → transformed priority → sampling probability → IS weight)
+- Statistical testing to validate probabilistic algorithms
+
+**Performance:**
+- All 40 tests pass (100% pass rate)
+- Implementation complete and correct
 
 ## Open Questions
 - Should we use std::pmr for memory pools later?

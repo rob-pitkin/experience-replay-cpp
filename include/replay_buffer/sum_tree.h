@@ -43,7 +43,7 @@ class SumTree {
     }
   }
 
-  float get(size_t index) {
+  float get(size_t index) const {
     if (index >= capacity_) {
       throw std::out_of_range("Index out of range");
     }
@@ -52,7 +52,7 @@ class SumTree {
 
   float total() const { return tree_[0]; }
 
-  size_t sample(float value) {
+  size_t sample(float value) const {
     if (value < 0 || value > tree_[0]) {
       throw std::out_of_range("Sample value out of range [0, total]");
     }

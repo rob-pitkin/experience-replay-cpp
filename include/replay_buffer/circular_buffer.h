@@ -114,7 +114,7 @@ class CircularBuffer {
   }
 
   std::vector<T> sample(size_t batch_size) const {
-    std::shared_lock<std::shared_mutex> lock(mutex_);
+    std::lock_guard<std::shared_mutex> lock(mutex_);
 
     if (batch_size <= 0) {
       throw std::invalid_argument("Batch size must be > 0");

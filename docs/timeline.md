@@ -2,7 +2,7 @@
 
 ## Current Status
 **Phase:** 2 - Prioritized Replay
-**Current Task:** ROB-13 - Prioritized Replay Buffer (Ready to start)
+**Current Task:** ROB-16 - Benchmarking prioritized sampling (Next up)
 **Started:** November 20, 2024
 
 ## Phase 1: Core Single-Process Implementation ✅ COMPLETED
@@ -29,9 +29,8 @@
 
 **Tasks:**
 - [x] **ROB-12**: Sum-tree data structure (Completed November 26, 2024)
-- [ ] **ROB-13**: Prioritized replay buffer (In Progress)
-- [ ] **ROB-14**: Priority updates
-- [ ] **ROB-15**: Importance sampling weights
+- [x] **ROB-13**: Prioritized replay buffer (Completed November 29, 2024)
+  - Note: ROB-13 covered functionality of ROB-14 (priority updates) and ROB-15 (importance sampling weights)
 - [ ] **ROB-16**: Benchmarking prioritized sampling
 
 **Success Criteria:**
