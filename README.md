@@ -4,8 +4,16 @@ A high-performance, multi-process experience replay buffer service for reinforce
 
 ## Project Status
 
-**Current Phase:** Phase 1 - Core Single-Process Implementation
-**Current Task:** [ROB-5](https://linear.app/robpersonal/issue/ROB-5) - Project Setup
+**Current Phase:** Phase 2 - Prioritized Replay
+**Current Task:** [ROB-16](https://linear.app/robpersonal/issue/ROB-16) - Benchmarking Prioritized Sampling
+
+### Completed
+- ✅ Phase 1: Core circular buffer with uniform sampling (ROB-5 through ROB-11)
+- ✅ Phase 2.1: Sum-tree data structure (ROB-12)
+- ✅ Phase 2.2-2.4: Prioritized replay buffer with IS weights (ROB-13, ROB-14, ROB-15)
+
+### Future Enhancements
+- Beta annealing schedule (client-side responsibility - depends on training step)
 
 ## Learning Goals
 
@@ -29,18 +37,28 @@ Note: Task-specific instruction files are in the `.claude/` directory (gitignore
 - [CMake Primer](docs/cmake_primer.md) - Quick reference for build system
 - [Development Notes](docs/notes.md) - Learning notes and design decisions
 
-## Build
+## Build & Test
 
 ```bash
-# Configure
+# Configure and build
 mkdir build && cd build
 cmake ..
-
-# Build
 cmake --build .
 
-# Run tests (after Phase 1.2)
+# Run tests
 ctest --output-on-failure
+
+# Run benchmarks
+./benchmarks/replay_buffer_benchmarks
+
+# Run specific benchmarks (filter by name)
+./benchmarks/replay_buffer_benchmarks --benchmark_filter=Prioritized
+
+# Run with repetitions for statistical confidence
+./benchmarks/replay_buffer_benchmarks --benchmark_repetitions=3
+
+# Save benchmark results to file
+./benchmarks/replay_buffer_benchmarks --benchmark_out=results.json --benchmark_out_format=json
 ```
 
 ## Tools Required
