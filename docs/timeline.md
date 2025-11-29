@@ -1,8 +1,9 @@
 # Experience Replay Buffer - Development Timeline
 
 ## Current Status
-**Phase:** 2 - Prioritized Replay ✅ COMPLETED
-**Completed:** November 29, 2024
+**Phase:** 3 - Multi-Process IPC
+**Current Task:** ROB-17 - Shared Memory Foundation
+**Started:** November 29, 2024
 
 ## Phase 1: Core Single-Process Implementation ✅ COMPLETED
 **Duration:** November 14-19, 2024 (5 days)
@@ -38,13 +39,23 @@
 - ✅ Support for dynamic priority updates (update_priorities() implementation)
 - ✅ < 10μs latency for batch of 32 (~8.9μs achieved in DEBUG build!)
 
-## Phase 3: Multi-Process IPC (Not Started)
+## Phase 3: Multi-Process IPC (In Progress)
+**Started:** November 29, 2024
 **Estimated:** 2-3 weeks
 
+**Tasks:**
+- [ ] **ROB-17**: Shared Memory Foundation
+- [ ] **ROB-18**: Process Synchronization Primitives
+- [ ] **ROB-19**: Shared Memory Buffer Adaptation
+- [ ] **ROB-20**: Multi-Process Connection Management
+- [ ] **ROB-21**: Multi-Process Integration Tests
+
 **Deliverables:**
-- Shared memory implementation
-- Process synchronization primitives
-- Writer/multiple readers support
+- Shared memory implementation using POSIX shm
+- Process synchronization primitives (pthread with PTHREAD_PROCESS_SHARED)
+- SharedCircularBuffer and SharedPrioritizedReplayBuffer
+- Create/attach API for multi-process coordination
+- Comprehensive multi-process tests
 - IPC configuration and connection management
 
 **Success Criteria:**

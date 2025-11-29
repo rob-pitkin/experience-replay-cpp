@@ -4,8 +4,9 @@ A high-performance, multi-process experience replay buffer service for reinforce
 
 ## Project Status
 
-**Current Phase:** Phase 2 ✅ COMPLETED
-**Completed:** November 29, 2024
+**Current Phase:** Phase 3 - Multi-Process IPC
+**Current Task:** [ROB-17](https://linear.app/robpersonal/issue/ROB-17) - Shared Memory Foundation
+**Started:** November 29, 2024
 
 ### Completed
 - ✅ Phase 1: Core circular buffer with uniform sampling (ROB-5 through ROB-11)
@@ -14,9 +15,16 @@ A high-performance, multi-process experience replay buffer service for reinforce
   - Proportional prioritized sampling with importance sampling weights
   - Benchmarks confirm < 10μs latency for batch of 32
 
+### In Progress
+- 🔄 Phase 3: Multi-process IPC implementation (ROB-17 through ROB-21)
+  - POSIX shared memory for cross-process buffer access
+  - Process-shared synchronization primitives
+  - SharedCircularBuffer and SharedPrioritizedReplayBuffer
+
 ### Future Enhancements
-- Beta annealing schedule (client-side responsibility - depends on training step)
-- Phase 3: Multi-process IPC implementation
+- Beta annealing schedule (client-side responsibility)
+- Phase 4: Python bindings with pybind11
+- Phase 5: Advanced features (n-step returns, compression)
 
 ## Learning Goals
 
@@ -38,6 +46,7 @@ Note: Task-specific instruction files are in the `.claude/` directory (gitignore
 - [Project Specification](docs/replay_buffer_spec.md) - Full technical requirements
 - [Timeline](docs/timeline.md) - Current progress and roadmap
 - [CMake Primer](docs/cmake_primer.md) - Quick reference for build system
+- [POSIX IPC Primer](docs/posix_ipc_primer.md) - Shared memory and synchronization guide
 - [Development Notes](docs/notes.md) - Learning notes and design decisions
 
 ## Build & Test

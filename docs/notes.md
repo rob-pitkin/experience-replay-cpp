@@ -226,6 +226,30 @@
 - Performance profiling and interpretation of benchmark results
 - DEBUG vs Release build impact on absolute timing (relative performance unchanged)
 
+### Phase 3: Multi-Process IPC (In Progress)
+**Started:** November 29, 2024
+
+**Planned Work:**
+- ROB-17: Shared memory foundation (POSIX shm_open, mmap)
+- ROB-18: Process synchronization primitives (pthread with PTHREAD_PROCESS_SHARED)
+- ROB-19: Shared memory buffer adaptation
+- ROB-20: Multi-process connection management
+- ROB-21: Multi-process integration tests
+
+**Key Challenges Ahead:**
+- Cannot use std::vector or dynamic allocation in shared memory
+- Must use process-shared mutexes instead of std::shared_mutex
+- Need offset-based addressing (pointers don't work across processes)
+- Robust mutex handling for process crash recovery
+- Memory layout design for fixed-size structures
+
+**Learning Focus:**
+- POSIX shared memory APIs (shm_open, mmap, munmap)
+- Process-shared pthread synchronization
+- Memory layout and alignment for IPC
+- Placement new and explicit object lifetime management
+- Multi-process testing patterns
+
 ## Open Questions
 - Should we use std::pmr for memory pools later?
 - Lock-free circular buffer possible without boost::lockfree?

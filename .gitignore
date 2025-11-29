@@ -57,6 +57,7 @@ docs/CLAUDE.md
 docs/cmake_primer.md
 docs/googletest_patterns.md
 docs/sum_tree_primer.md
+docs/posix_ipc_primer.md
 
 # Clangd cache
 .cache
